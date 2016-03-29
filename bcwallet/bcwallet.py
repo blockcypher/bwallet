@@ -382,7 +382,11 @@ def display_recent_txs(wallet_obj):
                     conf_str,
                     )
             if has_confirmations:
-                puts(colored.green(print_str))
+                sent = 'sent'
+                if sent in print_str:
+                    puts(colored.red(print_str))
+                else:
+                    puts(colored.green(print_str))
             else:
                 puts(colored.yellow(print_str))
     else:
