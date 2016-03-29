@@ -1121,8 +1121,7 @@ def wallet_home(wallet_obj):
 
     # Go to home screen
     while True:
-        new = 2
-        wallet_url = 'https://live.blockcypher.com/%s/xpub/%s/?subchain-indicies=0-1' % (coin_symbol_from_mkey(mpub), mpub)
+        wallet_url = get_public_wallet_url(mpub)
         puts('-' * 70 + '\n')
 
         if coin_symbol in ('bcy', 'btc-testnet'):
@@ -1174,7 +1173,7 @@ def wallet_home(wallet_obj):
         elif choice == '3':
             send_chooser(wallet_obj=wallet_obj)
         elif choice == '4':
-            webbrowser.open(wallet_url,new=new)
+            webbrowser.open(wallet_url)
         elif choice == '0':
             dump_private_keys_or_addrs_chooser(wallet_obj=wallet_obj)
 
