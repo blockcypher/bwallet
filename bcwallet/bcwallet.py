@@ -4,6 +4,7 @@ import sys
 import argparse
 import pkg_resources
 import traceback
+import webbrowser
 
 # just for printing
 from clint.textui import puts, colored, indent
@@ -1120,6 +1121,8 @@ def wallet_home(wallet_obj):
 
     # Go to home screen
     while True:
+        new = 2
+        wallet_url = 'https://live.blockcypher.com/%s/xpub/%s/?subchain-indicies=0-1' % (coin_symbol_from_mkey(mpub), mpub)
         puts('-' * 70 + '\n')
 
         if coin_symbol in ('bcy', 'btc-testnet'):
@@ -1142,6 +1145,7 @@ def wallet_home(wallet_obj):
             puts(colored.cyan('1: Show balance and transactions'))
             puts(colored.cyan('2: Show new receiving addresses'))
             puts(colored.cyan('3: Send funds (more options here)'))
+            puts(colored.cyan('4: Open wallet url with your browser'))
 
         with indent(2):
             if wallet_obj.private_key:
@@ -1153,7 +1157,7 @@ def wallet_home(wallet_obj):
 
         choice = choice_prompt(
                 user_prompt=DEFAULT_PROMPT,
-                acceptable_responses=range(0, 3+1),
+                acceptable_responses=range(0, 4+1),
                 quit_ok=True,
                 default_input='1',
                 )
@@ -1169,6 +1173,8 @@ def wallet_home(wallet_obj):
             display_new_receiving_addresses(wallet_obj=wallet_obj)
         elif choice == '3':
             send_chooser(wallet_obj=wallet_obj)
+        elif choice == '4':
+            webbrowser.open(wallet_url,new=new)
         elif choice == '0':
             dump_private_keys_or_addrs_chooser(wallet_obj=wallet_obj)
 
@@ -1269,8 +1275,11 @@ def cli():
             puts(colored.red("Invalid wallet entry: %s" % wallet))
 
     else:
-        puts("You've opened your HD wallet without specifying a master public or master private key, which you can do like this:\n")
-        print_bcwallet_basic_priv_opening(priv_to_display='xpriv123...')
+        puts("You've opened your HD wallet without specifying a master public or master private key.\n")
+        puts("To open your wallet with your master private key:\n")
+        print_bcwallet_basic_priv_opening(priv_to_display='xpriv123...\n')
+        puts("To open your wallet with your master public key:\n")
+        print_bcwallet_basic_priv_opening(priv_to_display='xpub123...\n')
 
         puts("Let's generate a new master private key (locally) for you to use.\n")
         puts('Which currency do you want to create a wallet for?')
