@@ -14,6 +14,7 @@ from blockcypher.constants import COIN_SYMBOL_MAPPINGS, COIN_SYMBOL_LIST
 
 from bitmerchant.wallet.keys import PrivateKey
 
+from builtins import input
 from datetime import datetime
 
 import json
@@ -62,7 +63,7 @@ def choice_prompt(user_prompt=DEFAULT_PROMPT, acceptable_responses=[],
     else:
         prompt_to_use = '%s: ' % user_prompt
 
-    user_input = raw_input(prompt_to_use).strip().strip('"')
+    user_input = input(prompt_to_use).strip().strip('"')
 
     if not user_input and default_input in acceptable_responses:
         return default_input
@@ -96,7 +97,7 @@ def get_crypto_qty(max_num, input_type, user_prompt=DEFAULT_PROMPT,
     else:
         prompt_to_use = '%s: ' % user_prompt
 
-    user_input = raw_input(prompt_to_use).strip().strip('"')
+    user_input = input(prompt_to_use).strip().strip('"')
 
     if default_input and not user_input:
         return int(default_input)
@@ -159,7 +160,7 @@ def get_int(max_int, min_int=1, user_prompt=DEFAULT_PROMPT, default_input=None,
     else:
         prompt_to_use = '%s: ' % user_prompt
 
-    user_input = raw_input(prompt_to_use).strip().strip('"')
+    user_input = input(prompt_to_use).strip().strip('"')
 
     if default_input and not user_input:
         return int(default_input)
@@ -205,7 +206,7 @@ def get_int(max_int, min_int=1, user_prompt=DEFAULT_PROMPT, default_input=None,
 def get_crypto_address(coin_symbol, user_prompt=DEFAULT_PROMPT, quit_ok=False):
 
     display_shortname = COIN_SYMBOL_MAPPINGS[coin_symbol]['display_shortname']
-    destination_address = raw_input('%s: ' % user_prompt).strip().strip('"')
+    destination_address = input('%s: ' % user_prompt).strip().strip('"')
 
     if not destination_address:
         err_str = 'No entry, please enter something'
@@ -235,7 +236,7 @@ def get_crypto_address(coin_symbol, user_prompt=DEFAULT_PROMPT, quit_ok=False):
 
 def get_wif_obj(network, user_prompt=DEFAULT_PROMPT, quit_ok=False):
 
-    user_input = raw_input('%s: ' % user_prompt).strip().strip('"')
+    user_input = input('%s: ' % user_prompt).strip().strip('"')
 
     if quit_ok and user_input in ['q', 'Q', 'b', 'B']:
         return False
@@ -306,7 +307,7 @@ def confirm(user_prompt=DEFAULT_PROMPT, default=None):
         prompt_to_use = user_prompt + ': '
     else:
         raise Exception('Bad Default Value: %s' % default)
-    user_input = raw_input(prompt_to_use).strip()
+    user_input = input(prompt_to_use).strip()
     if not user_input:
         return default
     elif user_input.lower() == 'y':
@@ -321,14 +322,14 @@ def confirm(user_prompt=DEFAULT_PROMPT, default=None):
 def get_public_wallet_url(mpub):
     # subchain indices set at 0 * 1
     return 'https://live.blockcypher.com/%s/xpub/%s/?subchain-indices=0-1' % (
-            coin_symbol_from_mkey(mpub),
+            next(iter(coin_symbol_from_mkey(mpub))),
             mpub,
             )
 
 
 # TODO: move to blockcypher python library
 def first4mprv_from_mpub(mpub):
-    coin_symbol = coin_symbol_from_mkey(mkey=mpub)
+    coin_symbol = next(iter(coin_symbol_from_mkey(mpub)))
     return COIN_SYMBOL_MAPPINGS[coin_symbol]['first4_mprv']
 
 
@@ -362,9 +363,9 @@ def print_bcwallet_piped_priv_cat_opening():
 
 
 def print_childprivkey_warning():
-        puts("\nNOTE:")
-        puts("Do not reveal your private keys to anyone!")
-        puts("One quirk of HD wallets is that if an attacker learns any of your non-hardened child private keys as well as your master public key then the attacker can derive all of your private keys and steal all of your funds.""")
+    puts("\nNOTE:")
+    puts("Do not reveal your private keys to anyone!")
+    puts("One quirk of HD wallets is that if an attacker learns any of your non-hardened child private keys as well as your master public key then the attacker can derive all of your private keys and steal all of your funds.""")
 
 
 def print_traversal_warning():

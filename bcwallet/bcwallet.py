@@ -107,7 +107,7 @@ def display_balance_info(wallet_obj, verbose=False):
     verbose_print('Wallet Name: %s' % wallet_name)
     verbose_print('API Key: %s' % BLOCKCYPHER_API_KEY)
 
-    coin_symbol = coin_symbol_from_mkey(mpub)
+    coin_symbol = next(iter(coin_symbol_from_mkey(mpub)))
 
     wallet_details = get_wallet_balance(
             wallet_name=wallet_name,
@@ -175,7 +175,7 @@ def get_addresses_on_both_chains(wallet_obj, used=None, zero_balance=None):
             is_hd_wallet=True,
             used=used,
             zero_balance=zero_balance,
-            coin_symbol=coin_symbol_from_mkey(mpub),
+            coin_symbol=next(iter(coin_symbol_from_mkey(mpub))),
             )
     verbose_print('wallet_addresses:')
     verbose_print(wallet_addresses)
@@ -223,7 +223,7 @@ def register_unused_addresses(wallet_obj, subchain_index, num_addrs=1):
     assert num_addrs > 0
 
     mpub = wallet_obj.serialize_b58(private=False)
-    coin_symbol = coin_symbol_from_mkey(mpub)
+    coin_symbol = next(iter(coin_symbol_from_mkey(mpub)))
     wallet_name = get_blockcypher_walletname_from_mpub(
             mpub=mpub,
             subchain_indices=[0, 1],
@@ -341,7 +341,7 @@ def display_recent_txs(wallet_obj):
     wallet_details = get_wallet_transactions(
             wallet_name=wallet_name,
             api_key=BLOCKCYPHER_API_KEY,
-            coin_symbol=coin_symbol_from_mkey(mpub),
+            coin_symbol=next(iter(coin_symbol_from_mkey(mpub))),
             )
     verbose_print(wallet_details)
 
@@ -374,7 +374,7 @@ def display_recent_txs(wallet_obj):
                         input_quantity=net_satoshis_tx,
                         input_type='satoshi',
                         output_type=UNIT_CHOICE,
-                        coin_symbol=coin_symbol_from_mkey(mpub),
+                        coin_symbol=next(iter(coin_symbol_from_mkey(mpub))),
                         print_cs=True,
                         ),
                     'received' if net_satoshis_tx > 0 else 'sent',
@@ -926,7 +926,7 @@ def dump_all_keys_or_addrs(wallet_obj):
                     address=child_wallet.to_address(),
                     path=path,
                     wif=wif_to_use,
-                    coin_symbol=coin_symbol_from_mkey(mpub),
+                    coin_symbol=next(iter(coin_symbol_from_mkey(mpub))),
                     )
 
     puts(colored.blue('\nYou can compare this output to bip32.org'))
@@ -943,7 +943,6 @@ def dump_selected_keys_or_addrs(wallet_obj, used=None, zero_balance=None):
 
     if not USER_ONLINE:
         puts(colored.red('\nInternet connection required, would you like to dump *all* %s instead?' % (
-            content_str,
             content_str,
             )))
         if confirm(user_prompt=DEFAULT_PROMPT, default=True):
@@ -982,7 +981,7 @@ def dump_selected_keys_or_addrs(wallet_obj, used=None, zero_balance=None):
                     address=address_obj['pub_address'],
                     wif=address_obj.get('wif'),
                     path=address_obj['path'],
-                    coin_symbol=coin_symbol_from_mkey(mpub),
+                    coin_symbol=next(iter(coin_symbol_from_mkey(mpub))),
                     )
 
             addr_cnt += 1
@@ -1099,7 +1098,7 @@ def wallet_home(wallet_obj):
     else:
         print_bcwallet_basic_pub_opening(mpub=mpub)
 
-    coin_symbol = coin_symbol_from_mkey(mpub)
+    coin_symbol = next(iter(coin_symbol_from_mkey(mpub)))
     if USER_ONLINE:
         wallet_name = get_blockcypher_walletname_from_mpub(
                 mpub=mpub,
@@ -1121,7 +1120,6 @@ def wallet_home(wallet_obj):
     # Go to home screen
     while True:
         puts('-' * 70 + '\n')
-
         if coin_symbol in ('bcy', 'btc-testnet'):
             display_shortname = COIN_SYMBOL_MAPPINGS[coin_symbol]['display_shortname']
             if coin_symbol == 'bcy':
@@ -1313,16 +1311,6 @@ def cli():
 
 
 def invoke_cli():
-    if sys.version_info[0] != 2 or sys.version_info[1] != 7:
-        puts(colored.red('Sorry, this app must be run with python 2.7'))
-        puts(colored.red('Your version: %s' % sys.version))
-        if sys.version_info[0] == 3:
-            puts(colored.red('Please uninstall bcwallet and reinstall like this:\n'))
-            with indent(4):
-                puts(colored.magenta('$ pip2 install bcwallet\n'))
-
-        sys.exit()
-
     # Check if blockcypher is up (basically if the user's machine is online)
     global USER_ONLINE
     if is_connected_to_blockcypher():
@@ -1376,6 +1364,7 @@ def invoke_cli():
             puts(colored.yellow(traceback.format_exc()))
         print_keys_not_saved()
         sys.exit()
+
 
 if __name__ == '__main__':
     '''

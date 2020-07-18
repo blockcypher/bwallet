@@ -20,7 +20,7 @@ COIN_SYMBOL_TO_BMERCHANT_NETWORK = {
 
 
 def guess_network_from_mkey(mkey):
-    cs = coin_symbol_from_mkey(mkey)
+    cs = next(iter(coin_symbol_from_mkey(mkey)))
     return COIN_SYMBOL_TO_BMERCHANT_NETWORK.get(cs)
 
 

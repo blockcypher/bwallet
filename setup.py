@@ -10,10 +10,11 @@ setup(
         author_email='mflaxman+blockcypher@gmail.com',
         url='https://github.com/blockcypher/bcwallet/',
         py_modules=['bcwallet'],
+        use_2to3=True,
         install_requires=[
-            'python>=2.7,<3',
             'clint==0.4.1',
-            'blockcypher==1.0.69',
+            'future==0.18.2',
+            'blockcypher==1.0.81',
             'bitmerchant==0.1.8',
             'tzlocal==1.2',
             ],
